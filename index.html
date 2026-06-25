@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viral Amazon Finds & Gadgets</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #10b981;
+            --accent-hover: #059669;
+            --border-color: rgba(255,255,255,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px 40px 20px;
+            background: linear-gradient(180deg, rgba(16, 185, 129, 0.1) 0%, rgba(11, 15, 25, 0) 100%);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+        }
+        .logo span {
+            color: var(--accent);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+            font-weight: 300;
+        }
+
+        /* Category filters */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Catalog grid */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto 0 auto;
+            padding: 0 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .img-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .img-wrapper img {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: contain;
+            padding: 15px;
+            transition: transform 0.5s;
+        }
+
+        .product-card:hover .img-wrapper img {
+            transform: scale(1.05);
+        }
+
+        .category-tag {
+            position: absolute;
+            top: 15px; left: 15px;
+            background: var(--bg-color);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .card-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-title {
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 1.4;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 42px;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .buy-btn {
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .buy-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .logo { font-size: 26px; }
+            .grid { gap: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Amazon<span>Finds</span></div>
+        <p class="subtitle">Discover trending Amazon gadgets, kitchen items, and self-improvement recommendations.</p>
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All</button><button class="filter-btn" data-filter="english">English</button><button class="filter-btn" data-filter="football">Football</button><button class="filter-btn" data-filter="general">General</button><button class="filter-btn" data-filter="nature">Nature</button><button class="filter-btn" data-filter="psychology">Psychology</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="grid" id="productGrid">
+            
+            <div class="product-card" data-category="football">
+                <div class="img-wrapper">
+                    <img src="images/B0F99RXKB6.jpg" alt="7×7ft Football Throwing Net, Football Training Net,Target Practice with 5 Different Sized L/M/S Targets | Great for Quarterback | Includes Compact Carrying Bag" loading="lazy">
+                    <span class="category-tag">FOOTBALL</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">7×7ft Football Throwing Net, Football Training Net,Target Practice with 5 Different Sized L/M/S Targets | Great for Quarterback | Includes Compact Carrying Bag</h3>
+                    <div class="card-footer">
+                        <span class="price">$64.99</span>
+                        <a href="products/B0F99RXKB6.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card" data-category="general">
+                <div class="img-wrapper">
+                    <img src="images/B0BRCJL4MM.jpg" alt="Led Desk Lamp for Office Home - Eye Caring Architect lamp with Clamp,Dual Screen Computer Monitor Work Smart Light: 24W 5 Color Flexible Adjustable Lighting Table Lamp for Study Drafting" loading="lazy">
+                    <span class="category-tag">GENERAL</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">Led Desk Lamp for Office Home - Eye Caring Architect lamp with Clamp,Dual Screen Computer Monitor Work Smart Light: 24W 5 Color Flexible Adjustable Lighting Table Lamp for Study Drafting</h3>
+                    <div class="card-footer">
+                        <span class="price">$44.17</span>
+                        <a href="products/B0BRCJL4MM.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card" data-category="general">
+                <div class="img-wrapper">
+                    <img src="images/B084GYKJ58.jpg" alt="Nespresso Vertuo Next Coffee and Espresso Maker by De'Longhi, White with Aeroccino Milk Frother Bundle" loading="lazy">
+                    <span class="category-tag">GENERAL</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">Nespresso Vertuo Next Coffee and Espresso Maker by De'Longhi, White with Aeroccino Milk Frother Bundle</h3>
+                    <div class="card-footer">
+                        <span class="price">$125.00</span>
+                        <a href="products/B084GYKJ58.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card" data-category="general">
+                <div class="img-wrapper">
+                    <img src="images/B09NCKH6JY.jpg" alt="WAC F-056L-MW Stella 60" Outdoor Ceiling Fan with Lights and Remote Control, Matte White" loading="lazy">
+                    <span class="category-tag">GENERAL</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">WAC F-056L-MW Stella 60" Outdoor Ceiling Fan with Lights and Remote Control, Matte White</h3>
+                    <div class="card-footer">
+                        <span class="price">$350.95</span>
+                        <a href="products/B09NCKH6JY.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card" data-category="english">
+                <div class="img-wrapper">
+                    <img src="images/150629569X.jpg" alt="GRE Vocabulary Flashcards, Sixth Edition + Online Access to Review Your Cards, a Practice Test, and Video Tutorials (Kaplan Test Prep)" loading="lazy">
+                    <span class="category-tag">ENGLISH</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">GRE Vocabulary Flashcards, Sixth Edition + Online Access to Review Your Cards, a Practice Test, and Video Tutorials (Kaplan Test Prep)</h3>
+                    <div class="card-footer">
+                        <span class="price">$19.67</span>
+                        <a href="products/150629569X.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card" data-category="english">
+                <div class="img-wrapper">
+                    <img src="images/B09CJC4P5F.jpg" alt="The Vocabulary Builder Workbook: Simple Lessons and Activities to Teach Yourself Over 1,400 Must-Know Words [Spiral-bound] Chris Lele and Magoosh" loading="lazy">
+                    <span class="category-tag">ENGLISH</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">The Vocabulary Builder Workbook: Simple Lessons and Activities to Teach Yourself Over 1,400 Must-Know Words [Spiral-bound] Chris Lele and Magoosh</h3>
+                    <div class="card-footer">
+                        <span class="price">-30%</span>
+                        <a href="products/B09CJC4P5F.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card" data-category="english">
+                <div class="img-wrapper">
+                    <img src="images/024129987X.jpg" alt="English for Everyone Vocabulary Builder" loading="lazy">
+                    <span class="category-tag">ENGLISH</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">English for Everyone Vocabulary Builder</h3>
+                    <div class="card-footer">
+                        <span class="price">-6%</span>
+                        <a href="products/024129987X.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card" data-category="english">
+                <div class="img-wrapper">
+                    <img src="images/B0FYL52N9V.jpg" alt="Say Hello (Easy English Stories for Beginner ESL Learners)" loading="lazy">
+                    <span class="category-tag">ENGLISH</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">Say Hello (Easy English Stories for Beginner ESL Learners)</h3>
+                    <div class="card-footer">
+                        <span class="price">$13.99</span>
+                        <a href="products/B0FYL52N9V.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card" data-category="nature">
+                <div class="img-wrapper">
+                    <img src="images/1467588814.jpg" alt="The Photo Drama of Creation" loading="lazy">
+                    <span class="category-tag">NATURE</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">The Photo Drama of Creation</h3>
+                    <div class="card-footer">
+                        <span class="price">$7.99</span>
+                        <a href="products/1467588814.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card" data-category="nature">
+                <div class="img-wrapper">
+                    <img src="images/B07Z9WDV2N.jpg" alt="Forest: (Tree Photography Book, Nature and World Photo Book)" loading="lazy">
+                    <span class="category-tag">NATURE</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">Forest: (Tree Photography Book, Nature and World Photo Book)</h3>
+                    <div class="card-footer">
+                        <span class="price">$20.99</span>
+                        <a href="products/B07Z9WDV2N.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card" data-category="nature">
+                <div class="img-wrapper">
+                    <img src="images/1426213921.jpg" alt="National Geographic Stunning Photographs" loading="lazy">
+                    <span class="category-tag">NATURE</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">National Geographic Stunning Photographs</h3>
+                    <div class="card-footer">
+                        <span class="price">-35%</span>
+                        <a href="products/1426213921.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card" data-category="nature">
+                <div class="img-wrapper">
+                    <img src="images/1419720899.jpg" alt="Beaches: Sun-drenched aerial beach scenes that turn global coastlines into pure escapist eye candy." loading="lazy">
+                    <span class="category-tag">NATURE</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">Beaches: Sun-drenched aerial beach scenes that turn global coastlines into pure escapist eye candy.</h3>
+                    <div class="card-footer">
+                        <span class="price">$20.42</span>
+                        <a href="products/1419720899.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card" data-category="nature">
+                <div class="img-wrapper">
+                    <img src="images/0997636920.jpg" alt="Hearts in Nature: A photographic journey through nature’s expressions of love" loading="lazy">
+                    <span class="category-tag">NATURE</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">Hearts in Nature: A photographic journey through nature’s expressions of love</h3>
+                    <div class="card-footer">
+                        <span class="price">$3.99</span>
+                        <a href="products/0997636920.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card" data-category="english">
+                <div class="img-wrapper">
+                    <img src="images/1956698000.jpg" alt="Direct Instruction Spoken English, Level 1, Presentation Book 1" loading="lazy">
+                    <span class="category-tag">ENGLISH</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">Direct Instruction Spoken English, Level 1, Presentation Book 1</h3>
+                    <div class="card-footer">
+                        <span class="price">$130.53</span>
+                        <a href="products/1956698000.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card" data-category="psychology">
+                <div class="img-wrapper">
+                    <img src="images/1761242350.jpg" alt="Negotiation + Influence = Success: Quick Lessons to Help You Win in Corporate Life" loading="lazy">
+                    <span class="category-tag">PSYCHOLOGY</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">Negotiation + Influence = Success: Quick Lessons to Help You Win in Corporate Life</h3>
+                    <div class="card-footer">
+                        <span class="price">$29.99</span>
+                        <a href="products/1761242350.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card" data-category="psychology">
+                <div class="img-wrapper">
+                    <img src="images/B0DWTCXWXX.jpg" alt="The Future of Negotiation: Master the Art of Persuasion in the Age of AI Using Step-by-Step Strategies to Advance Your Career, Make Tough Decisions, and Grow Your Business (The AI Empowerment Series)" loading="lazy">
+                    <span class="category-tag">PSYCHOLOGY</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">The Future of Negotiation: Master the Art of Persuasion in the Age of AI Using Step-by-Step Strategies to Advance Your Career, Make Tough Decisions, and Grow Your Business (The AI Empowerment Series)</h3>
+                    <div class="card-footer">
+                        <span class="price">$4.99</span>
+                        <a href="products/B0DWTCXWXX.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card" data-category="psychology">
+                <div class="img-wrapper">
+                    <img src="images/B09HFVRJ5Q.jpg" alt="The Art of Debating: 7 Crucial Techniques of Influence & Persuasion: Essential for Millennials and Generation Z" loading="lazy">
+                    <span class="category-tag">PSYCHOLOGY</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">The Art of Debating: 7 Crucial Techniques of Influence & Persuasion: Essential for Millennials and Generation Z</h3>
+                    <div class="card-footer">
+                        <span class="price">$14.99</span>
+                        <a href="products/B09HFVRJ5Q.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+            <div class="product-card" data-category="football">
+                <div class="img-wrapper">
+                    <img src="images/B0FWT94SM5.jpg" alt="DOVE MEN + CARE Striker Swag Antiperspirant Stick – FIFA World Cup 2026 Edition, 72H Odor‑Neutralizing Protection, Skin‑Caring Formula | 2.6 oz" loading="lazy">
+                    <span class="category-tag">FOOTBALL</span>
+                </div>
+                <div class="card-body">
+                    <h3 class="product-title">DOVE MEN + CARE Striker Swag Antiperspirant Stick – FIFA World Cup 2026 Edition, 72H Odor‑Neutralizing Protection, Skin‑Caring Formula | 2.6 oz</h3>
+                    <div class="card-footer">
+                        <span class="price">$4.00</span>
+                        <a href="products/B0FWT94SM5.html" target="_blank" class="buy-btn">View Deal</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const buttons = document.querySelectorAll('.filter-btn');
+        const cards = document.querySelectorAll('.product-card');
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Toggle active button
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filter = btn.getAttribute('data-filter');
+
+                cards.forEach(card => {
+                    const category = card.getAttribute('data-category');
+                    if (filter === 'all' || category === filter) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
